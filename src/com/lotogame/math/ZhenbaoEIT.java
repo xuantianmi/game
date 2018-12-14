@@ -23,8 +23,9 @@ public class ZhenbaoEIT {
 
 
     public ZhenbaoEIT() {
-        ZhenboConf conf = new ZhenboConf();
-        conf = new ZhenbaoConf1();
+        ZhenbaoConf conf = null;
+        conf = new ZhenbaoConf();
+        //conf = new ZhenbaoConf1();
         this.axisLen = conf.AXIS_LENGTH;
         this.totalWindows = this.axisLen * this.axisLen * this.axisLen;
         axis1 = conf.AXIS1;
