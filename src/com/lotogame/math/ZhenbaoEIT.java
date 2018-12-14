@@ -1,45 +1,37 @@
+package com.lotogame.math;
+
+import java.text.NumberFormat;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 public class ZhenbaoEIT {
-    private Integer[] axis1 = {
-        9, 1, 3, 9, 5, 2, 9, 9, 3, 4,
-        9, 9, 8, 5, 8, 9, 9, 9, 4, 4,
-        5, 5, 6, 4, 6, 9, 6, 9, 6, 9,
-        6, 9, 7, 8, 7, 9, 7, 8, 7, 9,
-        7, 8, 9, 8, 5, 9, 8, 7, 8, 9,
-        7, 9, 8, 9, 9, 9, 8, 7, 8, 9,
-        7, 8, 7, 8, 9, 6, 7, 9, 9, 7,
-        7, 8, 8, 9, 8, 9, 8, 6, 8, 9,
-        8
-    };
-    private Integer[] axis2 = {
-        6, 1, 6, 9, 5, 2, 2, 5, 3, 3,
-        9, 9, 9, 5, 9, 7, 4, 5, 4, 10,
-        5, 6, 7, 5, 6, 6, 7, 9, 10, 9,
-        7, 9, 7, 9, 7, 8, 5, 9, 8, 7,
-        8, 8, 9, 8, 5, 9, 8, 10, 8, 9,
-        10, 9, 8, 9, 8, 9, 8, 3, 9, 10,
-        8, 7, 7, 8, 9, 6, 10, 8, 9, 7,
-        7, 8, 6, 6, 9, 9, 10, 9, 8, 7,
-        8
-    };
-    private Integer[] axis3 = {
-        7, 1, 9, 9, 5, 2, 9, 9, 3, 4,
-        9, 9, 8, 5, 9, 9, 5, 4, 5, 4,
-        5, 5, 7, 5, 9, 6, 6, 9, 9, 6,
-        7, 9, 7, 8, 7, 8, 9, 8, 9, 7,
-        7, 8, 7, 8, 5, 9, 8, 9, 8, 9,
-        6, 8, 8, 2, 9, 9, 8, 7, 9, 7,
-        9, 9, 7, 8, 9, 6, 6, 8, 9, 7,
-        9, 7, 6, 9, 7, 9, 8, 6, 8, 7,
-        8
-    };
-
+    private Integer[] axis1;
+    private Integer[] axis2;
+    private Integer[] axis3;
+    /**
+     * 每个轴的长度
+     */
+    private Integer axisLen;
+    /**
+     * 总窗口，即奖组大小
+     */
+    private Integer totalWindows;
     /**
      * 各奖符的中奖奖金：分
      **/
-    private Integer[] awards = {100000, 20000, 10000, 4000, 2000, 1000, 300, 100, 40};
+    private Integer[] awards;
+
+
+    public ZhenbaoEIT() {
+        ZhenboConf conf = new ZhenboConf();
+        conf = new ZhenbaoConf1();
+        this.axisLen = conf.AXIS_LENGTH;
+        this.totalWindows = this.axisLen * this.axisLen * this.axisLen;
+        axis1 = conf.AXIS1;
+        axis2 = conf.AXIS2;
+        axis3 = conf.AXIS3;
+        this.awards = conf.AWARDS;
+    }
 
     public static void main(String[] args) {
         ZhenbaoEIT game = new ZhenbaoEIT();
@@ -113,17 +105,33 @@ public class ZhenbaoEIT {
             }
         }
 
-        System.out.println("Result cnt " + result.size());
+        double awardWindows = 0;
+        double award = 0;
+        System.out.println("不同单注奖金的数量（包括不中奖类型） " + result.size());
         for (Entry<Integer, Integer> item : result.entrySet()) {
             float key = item.getKey().intValue();
 
+            if(key != 0) {
+                awardWindows += item.getValue();
+                award += key * item.getValue() / 100;
+            }
+
             if (key % 100 == 0) {
-                System.out.printf("SingleChanceAward %.0f, Windows %d", key / 100, item.getValue());
+                System.out.printf("单注中奖奖金 %.0f,\t中奖窗口 %d", key / 100, item.getValue());
             } else {
-                System.out.printf("SingleChanceAward %.1f, Windows %d", key / 100, item.getValue());
+                System.out.printf("单注中奖奖金 %.1f,\t中奖窗口 %d", key / 100, item.getValue());
+
             }
             System.out.println();
         }
+
+        NumberFormat format = NumberFormat.getPercentInstance();
+        // 设置保留几位小数
+        format.setMaximumFractionDigits(2);
+
+        double tmp1 = awardWindows/this.totalWindows;
+        double tmp2 = award / this.totalWindows;
+        System.out.printf("中奖面 %s, 返奖率 %s", format.format(tmp1), format.format(tmp2));
 
     }
 
