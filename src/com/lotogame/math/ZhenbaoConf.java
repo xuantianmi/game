@@ -2,7 +2,7 @@ package com.lotogame.math;
 
 /**
  * Base Configure for Zhenbao game.
- * Result: 中奖面 27.77%, 返奖率 61.63%.
+ * Result: 单次游戏(中奖面 27.77%, 返奖率 61.63%); 免费游戏（1至10次累计）返奖率 5.39%; Total RTP 67.02%
  */
 public class ZhenbaoConf {
     protected Integer AXIS_LENGTH;
@@ -25,8 +25,12 @@ public class ZhenbaoConf {
      **/
     protected Integer[] AWARDS;
 
+    protected int MAX_FREE_GAME_CNT;
+
     public ZhenbaoConf() {
         AXIS_LENGTH = 81;
+        MAX_FREE_GAME_CNT = 10;
+
         AXIS1 = new Integer[] {
             9, 1, 3, 9, 5, 2, 9, 9, 3, 4,
             9, 9, 8, 5, 8, 9, 9, 9, 4, 4,

@@ -2,13 +2,14 @@ package com.lotogame.math;
 
 /**
  * 调整中奖符号分布，观察中奖面和返奖率变化
- * Raw Result: 中奖面 27.77%, 返奖率 61.63%.
- * New Result: 中奖面 28.14%, 返奖率 61.78%.
+ * Raw Result: 单次游戏(中奖面 27.77%, 返奖率 61.63%); 免费游戏（1至10次累计）返奖率 5.39%; Total RTP 67.02%
+ * New Result: 单次游戏(中奖面 28.14%, 返奖率 61.68%); 免费游戏（1至10次累计）返奖率 5.4%; Total RTP 67.08%
  */
 public class ZhenbaoConf1 extends ZhenbaoConf {
 
     public ZhenbaoConf1() {
-        AXIS_LENGTH = 81;
+        super();
+        MAX_FREE_GAME_CNT = 3;
         AXIS1 = new Integer[] {
             9, 1, 8, 9, 5, 2, 9, 9, 3, 4,
             9, 9, 8, 5, 8, 9, 9, 9, 4, 4,
@@ -43,6 +44,6 @@ public class ZhenbaoConf1 extends ZhenbaoConf {
             8
         };
         //AWARDS = new Integer[] {100000, 20000, 10000, 4000, 2000, 1000, 300, 100, 40};
-        AWARDS = new Integer[] {100000, 20000, 8000, 2100, 1200, 600, 185, 120, 100};
+        AWARDS = new Integer[] {100000, 20000, 8000, 2100, 1200, 610, 180, 120, 100};
     }
 }

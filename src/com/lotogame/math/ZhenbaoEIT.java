@@ -8,6 +8,7 @@ public class ZhenbaoEIT {
     private Integer[] axis1;
     private Integer[] axis2;
     private Integer[] axis3;
+    private int maxFreeGameCnt;
     /**
      * 每个轴的长度
      */
@@ -17,9 +18,15 @@ public class ZhenbaoEIT {
      */
     private Integer totalWindows;
     /**
+     * 免费游戏中奖窗口
+     */
+    private Integer freeWindows = 0;
+    /**
      * 各奖符的中奖奖金：分
      **/
     private Integer[] awards;
+
+    private boolean hasFreeGame = false;
 
 
     public ZhenbaoEIT() {
@@ -27,6 +34,7 @@ public class ZhenbaoEIT {
         conf = new ZhenbaoConf();
         //conf = new ZhenbaoConf1();
         this.axisLen = conf.AXIS_LENGTH;
+        this.maxFreeGameCnt = conf.MAX_FREE_GAME_CNT;
         this.totalWindows = this.axisLen * this.axisLen * this.axisLen;
         axis1 = conf.AXIS1;
         axis2 = conf.AXIS2;
@@ -41,7 +49,7 @@ public class ZhenbaoEIT {
     }
 
     /**
-     * 比较线上的三个数是否中奖，即三个数是否一致
+     * 比较线上的三个数是否中奖，即三个数是否一致。符合中奖时，附加判断是否有免费游戏。
      * 注意：no2有10通配符
      *
      * @param no1
@@ -51,10 +59,15 @@ public class ZhenbaoEIT {
      */
     private boolean checkLine(Integer no1, Integer no2, Integer no3) {
         // 中间数字遇到通配符，则替换成第一个数字的值
+        int tmp = 0;
         if (no2.equals(10)) {
+            tmp = 10;
             no2 = no1;
         }
         if (no1.equals(no2) && no2.equals(no3)) {
+            if(tmp == 10) {
+                this.hasFreeGame = true;
+            }
             return true;
         } else {
             return false;
@@ -72,7 +85,9 @@ public class ZhenbaoEIT {
         for (int i = 0; i < LENGTH; i++) {
             for (int j = 0; j < LENGTH; j++) {
                 for (int k = 0; k < LENGTH; k++) {
+                    this.hasFreeGame = false;
                     int award = 0;
+
                     //// 检查5条线是否一致，并记录一致线的符号和数量
                     // 第一条线横线
                     if (checkLine(axis1[i], axis2[j], axis3[k])) {
@@ -101,6 +116,11 @@ public class ZhenbaoEIT {
                         result.put(award, curWindows);
                     } else {
                         result.put(award, 1);
+                    }
+
+                    // 如果此窗口中至少一条线有FreeGame符号，则免费游戏窗口数量+1
+                    if(hasFreeGame) {
+                        this.freeWindows++;
                     }
                 }
             }
@@ -132,8 +152,19 @@ public class ZhenbaoEIT {
 
         double tmp1 = awardWindows/this.totalWindows;
         double tmp2 = award / this.totalWindows;
-        System.out.printf("中奖面 %s, 返奖率 %s", format.format(tmp1), format.format(tmp2));
-
+        // 免费游戏出现的概率
+        double freeRate = (double)this.freeWindows / this.totalWindows;
+        double tmp3 = 0;
+        // 主游戏返奖率+1至maxFreeGameCnt=10次免费游戏的返奖率之和
+        for(int i = 1; i < maxFreeGameCnt; i++) {
+            tmp3 += Math.pow(freeRate, i);
+        }
+        tmp3 = tmp3 * tmp2;
+        System.out.println("注意：免费游戏的轴配置与第一关相同！");
+        System.out.printf("单次游戏(中奖面 %s, 返奖率 %s); 免费游戏（1至%d次累计）返奖率 %s; Total RTP %s\n"
+            , format.format(tmp1), format.format(tmp2), this.maxFreeGameCnt
+            , format.format(tmp3), format.format(tmp2 + tmp3));
+        //System.out.printf("Free Windows: %d, Total Windows %d, freeRate %f", this.freeWindows, this.totalWindows, freeRate);
     }
 
     /**
